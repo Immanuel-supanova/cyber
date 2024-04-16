@@ -4,10 +4,11 @@ from sqlalchemy.orm import Session
 from config.config import SECRET_KEY, ALGORITHM
 from database.database import Base, SessionLocal
 from passlib.context import CryptContext
-from schema.users import UserAuthenticate, UserCreate, UserEmailChange, UserIsActiveChange, UserIsStaffChange, UserPasswordChange, User as UserMain
+from schema.token import TokenData
+from schema.users import UserAuthenticate, UserCreate, UserEmailChange, UserIsActiveChange, UserIsStaffChange, UserPasswordChange, User
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, HTTPException, status
 from typing import Annotated
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -30,19 +31,19 @@ class UserQuery(object):
 
     def create(self, user: UserCreate):
         hashed_password = get_password_hash(user.password)
-        db_user = User(email=user.email, password=hashed_password)
+        db_user = User(email=user.username, password=hashed_password)
         self.db.add(db_user)
         self.db.commit()
 
     def create_staff(self, user: UserCreate):
         hashed_password = get_password_hash(user.password)
-        db_user = User(email=user.email, password=hashed_password, is_staff=True)
+        db_user = User(email=user.username, password=hashed_password, is_staff=True)
         self.db.add(db_user)
         self.db.commit()
     
     def create_admin(self, user: UserCreate):
         hashed_password = get_password_hash(user.password)
-        db_user = User(email=user.email, password=hashed_password, is_admin=True)
+        db_user = User(email=user.username, password=hashed_password, is_admin=True)
         self.db.add(db_user)
         self.db.commit()
     
@@ -66,12 +67,12 @@ class UserQuery(object):
         self.db.commit()
     
     def is_active_change(self, user: UserIsActiveChange):
-        user2 = self.get_user_by_email(user.email)
+        user2 = self.get_user_by_email(user.username)
         self.db.query(user2).update({"is_active": user.is_active})
         self.db.commit()
     
     def is_staff_change(self, user: UserIsStaffChange):
-        user2 = self.get_user_by_email(user.email)
+        user2 = self.get_user_by_email(user.username)
         self.db.query(user2).update({"is_staff": user.is_staff})
         self.db.commit()
     
@@ -85,17 +86,16 @@ class UserQuery(object):
         return self.db.query(User).filter(User.email == email).first()
 
     def authenticate_user(self, user: UserAuthenticate):
-        user2 = self.get_user_by_email(user.email)
-        if not user:
+        user2 = self.get_user_by_email(user.username)
+        if not user2:
             return False
-        if not verify_password(user.password, user2.hashed_password):
+        if not verify_password(user.password, user2.password):
             return False
-        return user
+        return user2
 
 query = UserQuery(db=SessionLocal)
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
-
 
 def get_password_hash(password):
     return pwd_context.hash(password)
@@ -118,10 +118,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id: int = payload.get("id")
+        id: int = payload.get("sub")
         if id is None:
             raise credentials_exception
-        token_data = UserMain(id=id)
+        token_data = TokenData(id=id)
     except JWTError:
         raise credentials_exception
     user = query.get_user(id=token_data.id)
@@ -132,6 +132,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
-    if current_user.disabled:
+    if current_user.is_active == False:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
