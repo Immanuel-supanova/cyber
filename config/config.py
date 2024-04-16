@@ -1,9 +1,8 @@
-import os
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-load_dotenv()  # take environment variables from .env.
+config = dotenv_values(".env")
 
-DATABASE_URL = os.getenv("DB")
+DATABASE_URL = config["DB"]
 ALGORITHM = "HS256"
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = config["SECRET_KEY"]
 ACCESS_TOKEN_EXPIRE_MINUTES = 30

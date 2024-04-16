@@ -17,7 +17,7 @@ class User(UserBase):
     is_staff: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserEmailChange(BaseModel):
     old_email: str 
