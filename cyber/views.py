@@ -10,6 +10,5 @@ class ApplicationTokenObtainPairSerializer(TokenObtainPairSerializer):
 class ApplicationTokenObtainPairView(TokenObtainPairView):
     serializer_class = ApplicationTokenObtainPairSerializer
 
-class AplicationTokenRefreshView():
+class AplicationTokenRefreshView(TokenRefreshView):
     serializer_class = ApplicationTokenObtainPairSerializer
-    
