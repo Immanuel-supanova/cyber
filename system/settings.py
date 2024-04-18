@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'api',
     'myadmin',
+    'cyber',
 
     'rest_framework',
     "corsheaders",
