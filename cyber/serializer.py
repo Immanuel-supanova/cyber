@@ -30,12 +30,6 @@ class ApplicationTokenSerializer(serializers.Serializer):
                 "app does not exist",
             )
         
-        if app.check_password(data=["public_key"]) == False:
-            raise exceptions.AuthenticationFailed(
-                self.error_messages["no_active_application"],
-                "public key is invalid",
-            )
-
         if app.is_active == False:
             raise exceptions.AuthenticationFailed(
                 self.error_messages["no_active_application"],
@@ -96,12 +90,6 @@ class ApplicationRefreshTokenSerializer(serializers.Serializer):
                 "app does not exist",
             )
         
-        if app.check_password(self.public_key) == False:
-            raise exceptions.AuthenticationFailed(
-                self.error_messages["no_active_application"],
-                "public key is invalid",
-            )
-
         if app.is_active == False:
             raise exceptions.AuthenticationFailed(
                 self.error_messages["no_active_application"],
