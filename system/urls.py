@@ -26,8 +26,8 @@ urlpatterns = [
     path('myadmin/', include('myadmin.urls')),
     path('rest/', include('rest_framework.urls')),
     path('api/', include('api.urls')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view()),
+    path('api/community/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/community/token/refresh/', TokenRefreshView.as_view()),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
