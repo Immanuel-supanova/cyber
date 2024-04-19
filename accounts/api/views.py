@@ -4,7 +4,6 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from cyber.auth import ApplicationAuthentication
 from cyber.permissions import ApplicationRequiredPermissions
 
 from .serializers import UserSerializer, RegisterSerializer
@@ -15,7 +14,7 @@ User = get_user_model()
 class UserCreate(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
-    permission_classes = (DjangoModelPermissions, ApplicationRequiredPermissions)
+    permission_classes = (DjangoModelPermissions,)
 
 
 
@@ -26,7 +25,7 @@ class UserList(generics.ListAPIView):
 
     serializer_class = UserSerializer
     queryset = User.objects.exclude(is_superuser=True)
-    permission_classes = (DjangoModelPermissions, ApplicationRequiredPermissions)
+    permission_classes = (DjangoModelPermissions,)
 
 
 class UserRetrieve(generics.RetrieveAPIView):
@@ -36,7 +35,7 @@ class UserRetrieve(generics.RetrieveAPIView):
 
     serializer_class = UserSerializer
     queryset = User.objects.exclude(is_superuser=True)
-    permission_classes = (DjangoModelPermissions, ApplicationRequiredPermissions)
+    permission_classes = (DjangoModelPermissions,)
 
 
 class CurrentUser(APIView):
@@ -47,5 +46,4 @@ class CurrentUser(APIView):
         user = User.objects.get(id=request.user.id)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-
 

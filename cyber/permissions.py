@@ -1,11 +1,18 @@
 from rest_framework.permissions import DjangoModelPermissions
 
+from cyber.models import Application
+
 class ApplicationRequiredPermissions(DjangoModelPermissions):
     def has_permission(self, request, view):
-        # Assuming ApplicationAuthentication provides (app, token)
-        app, token = request.auth
 
-        # Check if the authenticated app has the required permissions
+        token = request.auth
+
+        if not token:
+            return False
+        
+        uuid = token["uuid"]
+        app = Application.objects.get(uuid=uuid)
+        
         if not app:
             return False
         

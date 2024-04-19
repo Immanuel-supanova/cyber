@@ -22,6 +22,6 @@ class ApplicationAuthentication(JWTAuthentication):
         try:
             app = Application.objects.get(uuid=token['uuid'])
         except Application.DoesNotExist:
-            raise AuthenticationFailed('No Developer found')
+            raise AuthenticationFailed('No Application found')
 
         return (app, token)
