@@ -1,4 +1,8 @@
+import uuid
+
 from django.contrib.auth import get_user_model
+from django.contrib.admin.models import LogEntry, ADDITION
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin, Group, Permission
 
@@ -7,13 +11,20 @@ User = get_user_model()
 class AppManager(models.Manager):
     use_in_migrations = True
 
-    def create_app(self, name, user_id):
-        app = self.model(name=name, user=user_id)
-        user = User.objects.get(id=user_id)
+    def create_app(self, name, user):
+        app_uuid = uuid.uuid4()
+        app = self.model(name=name, user=user, uuid=app_uuid)
+        user = User.objects.get(email=user.email)
         if user.is_superuser == False:
             raise ValueError("User must be a superuser.")
 
         app.save(using=self._db)
+        LogEntry.objects.log_action(
+            user_id=user.id,
+            content_type_id=ContentType.objects.get_for_model(self.model).pk,
+            object_id=app.pk,
+            object_repr=app.user.username,
+            action_flag=ADDITION)
         return app
 
 
