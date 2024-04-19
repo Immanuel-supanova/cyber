@@ -112,7 +112,6 @@ class ApplicationRefreshTokenSerializer(serializers.Serializer):
 
         refresh = self.get_token(self.app)
         # get self.public_key
-        # encrypt refresh token
         # encrypt access_token
         data["access"] = str(refresh.access_token)
 

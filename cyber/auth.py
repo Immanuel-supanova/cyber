@@ -13,11 +13,14 @@ class ApplicationAuthentication(JWTAuthentication):
         if raw_token is None:
             return None
         
+        # get rsa private key
+        # decrypt the token
+        
         # Validate token and retrieve app
         token = self.get_validated_token(raw_token)
         
         try:
-            app = Application.objects.get(id=token['sub'])
+            app = Application.objects.get(uuid=token['uuid'])
         except Application.DoesNotExist:
             raise AuthenticationFailed('No Developer found')
 
