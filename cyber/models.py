@@ -33,6 +33,7 @@ class Application(PermissionsMixin):
     name = models.CharField(max_length=1028)
     uuid = models.UUIDField(unique=True, auto_created=True, null=False)
     is_active = models.BooleanField(default=True)
+    is_anonymous = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="app_user")
     groups = models.ManyToManyField(

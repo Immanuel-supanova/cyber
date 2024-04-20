@@ -73,6 +73,8 @@ SIMPLE_JWT = {
 
 }
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # Set the JWT cookie name and secure flag
 SESSION_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_SAMESITE = 'Strict'

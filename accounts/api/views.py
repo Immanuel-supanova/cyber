@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics
+from rest_framework import generics, status
+from django.core.exceptions import ValidationError
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-from .serializers import UserSerializer, RegisterSerializer
+from .serializers import PasswordResetSerializer, UserSerializer, RegisterSerializer
 
 User = get_user_model()
 
@@ -46,3 +47,17 @@ class CurrentUser(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
+class UserPasswordReset(generics.GenericAPIView):
+    serializer_class = PasswordResetSerializer
+
+    def post(self, request, *args, **kwargs):
+        # Accessing data from POST request
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            raise ValidationError(e.args[0])
+        
+        return Response({"message": serializer.validated_data}, status=status.HTTP_200_OK)
+    
