@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from rest_framework import serializers,exceptions
 
@@ -78,3 +78,14 @@ class PasswordResetSerializer(serializers.Serializer):
         email.send()
         
         return "An Email has been sent"
+    
+
+class PasswordResetConfirmSerializer(UserSerializer):
+    new_password1 = serializers.CharField(required=True, write_only=True,)
+    new_password2 = serializers.CharField(required=True, write_only=True,)
+    uidb64 = serializers.CharField(required=True, write_only=True,)
+    token = serializers.CharField(required=True, write_only=True,)
+
+    class Meta:
+        model = User
+        fields = ['new_password1', 'new_password2', 'uidb64', 'token']

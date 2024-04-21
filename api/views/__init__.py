@@ -1,1 +1,1 @@
-from .users import AppUserCreate, AppUserList, AppUserRetrieve, AppUserPasswordReset
+from .users import AppUserCreate, AppUserList, AppUserRetrieve, AppUserPasswordReset, AppUserPasswordResetConfirm
