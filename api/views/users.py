@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework import exceptions
 
+from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import ValidationError
 from rest_framework.response import Response
@@ -48,6 +50,23 @@ class AppUserPasswordReset(generics.GenericAPIView):
     authentication_classes = (ApplicationAuthentication,)
     serializer_class = PasswordResetSerializer
 
+    def check_permissions(self, request):
+        token = request.auth
+
+        if not token:
+            return False
+        
+        uuid = token["uuid"]
+        app = Application.objects.get(uuid=uuid)
+        if not app:
+            return False
+
+        u = app.user_permissions.get_by_natural_key("request_user_password_reset_token", "accounts", "user")
+        if not u:
+            return False
+        
+        return True
+
     def post(self, request, *args, **kwargs):
         # Accessing data from POST request
         serializer = self.get_serializer(data=request.data)
@@ -63,6 +82,7 @@ class AppUserPasswordResetConfirm(generics.UpdateAPIView):
     serializer_class = PasswordResetConfirmSerializer
     queryset = User.objects.all()
     authentication_classes = (ApplicationAuthentication,)
+    permission_classes = (ApplicationRequiredPermissions,)
 
 
     def get_object(self, request):
@@ -76,23 +96,6 @@ class AppUserPasswordResetConfirm(generics.UpdateAPIView):
         obj = User.objects.get(id=id)
 
         return obj
-
-    def check_permissions(self, request):
-        token = request.auth
-
-        if not token:
-            return False
-        
-        uuid = token["uuid"]
-        app = Application.objects.get(uuid=uuid)
-        if not app:
-            return False
-
-        u = app.user_permissions.get_by_natural_key("change_user", "accounts", "user")
-        if not u:
-            return False
-        
-        return True
     
     def update(self, request, *args, **kwargs):
         token = PasswordResetTokenGenerator()
@@ -114,6 +117,12 @@ class AppUserPasswordResetConfirm(generics.UpdateAPIView):
         
         instance.set_password(password1)
         instance.save()
+        LogEntry.objects.log_action(
+            user_id=instance.pk,
+            content_type_id=ContentType.objects.get_for_model(instance).pk,
+            object_id=instance.pk,
+            object_repr=instance.username,
+            action_flag=CHANGE)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
