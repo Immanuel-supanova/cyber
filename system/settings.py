@@ -72,7 +72,7 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ("rest_framework_simplejwt.tokens.AccessToken", "cyber.token.AccessToken",),
 
 }
-
+AUTHENTICATION_BACKENDS = ['cyber.backend.ApplicationBackend', 'django.contrib.auth.backends.ModelBackend']
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Set the JWT cookie name and secure flag
