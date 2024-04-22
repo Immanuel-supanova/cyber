@@ -3,7 +3,7 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
 
 from cyber.models import Application
-from cyber.token import ApplicationToken, RefreshToken, AccessToken
+from cyber.token import ApplicationToken, RefreshToken
 
 class AppTokenObtainPairSerializer(serializers.Serializer):
     uuid = serializers.CharField(write_only=True)

@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView, PasswordResetDoneView, Password
 from django.urls import path, reverse_lazy
 
 from .forms import LoginForm, UserPasswordChangeForm, UserPasswordResetForm
-from .views import IndexView, SignoutView, CheckEmailView, ActivateView, SuccessView
+from .views import SignoutView, CheckEmailView, ActivateView, SuccessView
 from .views import UserCreateView, UserUpdateView, UserDeleteView
 
 urlpatterns = [
