@@ -107,6 +107,10 @@ TEMPLATES = [
     },
 ]
 
+PRIVATE_KEY_FILE = f"{BASE_DIR}/private_key.pem"
+PUBLIC_KEY_FILE = f"{BASE_DIR}/public_key.pem"
+
+
 WSGI_APPLICATION = 'system.wsgi.application'
 
 # Database

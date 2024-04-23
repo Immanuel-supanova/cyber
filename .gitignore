@@ -161,3 +161,6 @@ cython_debug/
 
 profile/
 main.py
+
+private_key.pem
+public_key.pem
