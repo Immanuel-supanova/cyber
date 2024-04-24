@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.contenttypes.models import ContentType
 
-from .serializers import PasswordResetConfirmSerializer, PasswordResetSerializer, UserSerializer, RegisterSerializer
+from ..serializers import PasswordResetConfirmSerializer, PasswordResetSerializer, UserSerializer, RegisterSerializer
 
 User = get_user_model()
 

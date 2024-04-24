@@ -18,7 +18,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('auth/', include('accounts.urls')),
@@ -26,8 +25,6 @@ urlpatterns = [
     path('myadmin/', include('myadmin.urls')),
     path('rest/', include('rest_framework.urls')),
     path('api/', include('api.urls')),
-    path('api/community/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/community/token/refresh/', TokenRefreshView.as_view()),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
