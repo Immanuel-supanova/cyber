@@ -1,25 +1,32 @@
 import secrets
 from system.settings import PRIVATE_KEY_FILE, PUBLIC_KEY_FILE
-
+from pathlib import Path
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-with open(PRIVATE_KEY_FILE, "rb") as key_file:
-    private_pem = key_file.read()
-    private_key = serialization.load_pem_private_key(
-        private_pem,
-        password=None,  
-        backend=default_backend()
-    )
+if Path(PRIVATE_KEY_FILE).exists():
+    with open(PRIVATE_KEY_FILE, "rb") as key_file:
+        private_pem = key_file.read()
+        private_key = serialization.load_pem_private_key(
+            private_pem,
+            password=None,  
+            backend=default_backend()
+        )
+else:
+    private_key = None
 
-# Load public key from file
-with open(PUBLIC_KEY_FILE, "rb") as key_file:
-    public_pem = key_file.read()
-    public_key = serialization.load_pem_public_key(
-        public_pem,
-        backend=default_backend()
-    )
+
+if Path(PUBLIC_KEY_FILE).exists():
+    # Load public key from file
+    with open(PUBLIC_KEY_FILE, "rb") as key_file:
+        public_pem = key_file.read()
+        public_key = serialization.load_pem_public_key(
+            public_pem,
+            backend=default_backend()
+        )
+else: 
+    public_key = None
 
 def generate_aes_key():
     key = secrets.token_bytes(32)
