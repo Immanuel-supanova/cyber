@@ -20,9 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('auth/', include('accounts.urls')),
     path('admin/', admin.site.urls),
-    path('myadmin/', include('myadmin.urls')),
     path('rest/', include('rest_framework.urls')),
     path('api/', include('api.urls')),
 ]
