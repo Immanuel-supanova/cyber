@@ -2,6 +2,7 @@ from typing import Any, Dict
 from django.contrib.admin.models import LogEntry
 from rest_framework import serializers
 
+from myadmin.models import Profile
 from myadmin.query import LogApp, LogAppDate, LogAppMonth, LogAppYear, LogDate, LogModel, LogModelDate, LogModelMonth, LogModelYear, LogMonth, LogUser, LogUserDate, LogUserMonth, LogUserYear, LogYear
 
 
@@ -287,3 +288,26 @@ class LogUserDateSerializers(serializers.Serializer):
             "del_list":logs.deletion_date_list(),
             "del_count":logs.deletion_date_count(),
             } 
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField(max_length=128, min_length=8, write_only=True, required=True)
+
+    class Meta:
+        model = Profile
+        fields = ["user_id", "profile_img", "bio"]
+
+
+class ProfileGetSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(max_length=128, min_length=8, write_only=True, required=True)
+
+    class Meta:
+        model = Profile
+        fields = ["user", "profile_img", "bio"]
